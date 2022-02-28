@@ -5,11 +5,21 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-php');
 
-    var websiteDir = 'wordpress/wp-content/themes';
+    var wordpressDir = '/var/www/html/';
+    var wordpressThemesDir = '/var/www/html/wp-content/themes';
 
     // Project configuration.
     grunt.initConfig({
+        clean: { 'dist': { 'src': 'dist/*' } },
+        copy: {
+            'main': {
+                'dest': 'dist/',
+                'expand': true,
+                'src': 'theme-name/**',
+            }
+        },
         sync: {
             main: {
                 verbose: true,
@@ -17,9 +27,17 @@ module.exports = function (grunt) {
                     {
                         cwd: 'dist/',
                         src: '**',
-                        dest: websiteDir
+                        dest: wordpressThemesDir
                     }
                 ]
+            }
+        },
+        php: {
+            dist: {
+                options: {
+                    port: 8080,
+                    base: wordpressDir
+                }
             }
         },
         watch: {
@@ -30,6 +48,7 @@ module.exports = function (grunt) {
                 tasks: [
                     'clean',
                     'copy',
+                    'php',
                     'sync'
                 ],
                 options: {
@@ -38,15 +57,7 @@ module.exports = function (grunt) {
                     livereload: true
                 }
             }
-        },
-        copy: {
-            'main': {
-                'dest': 'dist/',
-                'expand': true,
-                'src': 'theme-name/**',
-            }
-        },
-        clean: { 'dist': { 'src': 'dist/*' } }
+        }
     });
 
     // Default task(s).
